@@ -1,0 +1,14 @@
+class_name: ApiTester
+modules:
+    enabled:
+              - Db:
+                dsn: 'mysql:host=localhost;dbname=adraaf'
+                user: 'root'
+                password: 'TeaTalKMySQLServEr'
+                dump: tests/_data/dump.sql
+                populate: true
+                cleanup: false
+                reconnect: true
+              - REST:
+                  depends: PhpBrowser
+                  url: http://dev.adraaf.ir/api/
