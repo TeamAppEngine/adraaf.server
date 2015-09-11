@@ -63,19 +63,28 @@ class OfferRepository {
 
         for($radius = 1 ; $radius < 4 && count($resultOffers) < 5 ; $radius++) {
             foreach ($offers as $offer) {
-                if ($this->distance($offer->store->x,$offer->store->y,$x,$y,'K') < $radius){
-                    $tempOffer = [];
-                    $tempOffer["x"]=$offer->store->x;
-                    $tempOffer["y"]=$offer->store->y;
-                    $tempOffer["category"]=$offer->store->category->id;
-                    $tempOffer["expire"]=strtotime($offer->end_date);
-                    $tempOffer["percent"]=$percentage*($offer->maximum_percentage-1);
-                    $tempOffer["title"]=$offer->store->title;
-                    $tempOffer["description"]=$offer->description;
-                    $tempOffer["address"]=$offer->store->address;
-                    $tempOffer["img"]="http://umkkf795f2ee.msadjad.koding.io/".$offer->store->id."/image";
-                    $tempOffer["id"]= $offer->store->id;
-                    $resultOffers[] = $tempOffer;
+                $sw = 0;
+                foreach($resultOffers as $resultOffer){
+                    if($offer->id == $resultOffer["id"]) {
+                        $sw = 1;
+                        break;
+                    }
+                }
+                if($sw == 0) {
+                    if ($this->distance($offer->store->x, $offer->store->y, $x, $y, 'K') < $radius) {
+                        $tempOffer = [];
+                        $tempOffer["x"] = $offer->store->x;
+                        $tempOffer["y"] = $offer->store->y;
+                        $tempOffer["category"] = $offer->store->category->id;
+                        $tempOffer["expire"] = strtotime($offer->end_date);
+                        $tempOffer["percent"] = $percentage * ($offer->maximum_percentage - 1);
+                        $tempOffer["title"] = $offer->store->title;
+                        $tempOffer["description"] = $offer->description;
+                        $tempOffer["address"] = $offer->store->address;
+                        $tempOffer["img"] = "http://umkkf795f2ee.msadjad.koding.io/" . $offer->store->id . "/image";
+                        $tempOffer["id"] = $offer->store->id;
+                        $resultOffers[] = $tempOffer;
+                    }
                 }
             }
         }
