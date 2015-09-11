@@ -18,10 +18,10 @@ Route::bind('uuid',function($uuid){
 
 });
 
-Route::bind('email',function($email){
+Route::bind('offer_id',function($id){
 
-    $userModel = new \Repositories\UserRepository(new \App\User);
-    return $userModel->getUserBasedOnEmail($email);
+    $offerModel = new \Repositories\OfferRepository(new \App\Offer);
+    return $offerModel->getOfferBasedOnId($id);
 
 });
 
@@ -39,6 +39,12 @@ Route::get('api/users/offers','UsersController@getOffers');
 Route::get('api/users/{uuid}/offers','UsersController@getOffers');
 
 Route::get('api/users/offers','UsersController@getOffersAnonymously');
+
+Route::post('api/users/{uuid}/share/{offer_id}','UsersController@logShare');
+
+Route::post('api/users/{uuid}/save/{offer_id}','UsersController@logSave');
+
+Route::post('api/users/{uuid}/buy/{offer_id}','UsersController@logBuy');
 
 Route::get('api/stores/{id}/image','UsersController@getImage');//TODO
 

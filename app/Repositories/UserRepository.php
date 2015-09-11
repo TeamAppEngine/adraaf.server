@@ -110,7 +110,7 @@ class UserRepository {
     public function getUserPoints()
     {
         $actions = $this->UserModel->actions;
-        return $actions->sum('points');
+        return $actions->sum('point');
     }
 
     /**
@@ -126,11 +126,50 @@ class UserRepository {
         ]);
     }
 
+    /**
+     *
+     */
     public function logSignUp()
     {
         $action = \App\Action::where('title','=','sign_up')->get()->first();
         $this->UserModel->actions()->attach($action->id, [
             'points' => $action->point
+        ]);
+    }
+
+    /**
+     * @param \App\Offer $offer
+     */
+    public function logShare(\App\Offer $offer)
+    {
+        $action = \App\Action::where('title','=','share_offer')->get()->first();
+        $this->UserModel->actions()->attach($action->id, [
+            'points' => $action->point,
+            'offer_id' => $offer->id
+        ]);
+    }
+
+    /**
+     * @param \App\Offer $offer
+     */
+    public function logSave(\App\Offer $offer)
+    {
+        $action = \App\Action::where('title','=','save_offer')->get()->first();
+        $this->UserModel->actions()->attach($action->id, [
+            'points' => $action->point,
+            'offer_id' => $offer->id
+        ]);
+    }
+
+    /**
+     * @param \App\Offer $offer
+     */
+    public function logBuy(\App\Offer $offer)
+    {
+        $action = \App\Action::where('title','=','buy_offer')->get()->first();
+        $this->UserModel->actions()->attach($action->id, [
+            'points' => $action->point,
+            'offer_id' => $offer->id
         ]);
     }
 }

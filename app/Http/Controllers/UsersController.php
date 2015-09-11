@@ -70,8 +70,8 @@ class UsersController extends Controller
 
         //send the results back to the user
         return json_encode([
-            "points" => 0,
-            "level" => 1,
+            $userRepo->getUserPoints(),
+            $userRepo->getUserLevel()->id,
             "user_id" => $user->uuid
         ]);
     }
@@ -142,7 +142,7 @@ class UsersController extends Controller
             //send the results back to the user
             return json_encode([
                 "points" => $userRepo->getUserPoints(),
-                "level" => $userRepo->getUserLevel()->id,
+                "level" =>  $userRepo->getUserLevel()->id,
                 "user_id" => $user->uuid
             ]);
 
@@ -216,6 +216,71 @@ class UsersController extends Controller
             "offers" => $offerRepo->getOffers($x, $y, null),
             "points" => 0,
             "level" => 0
+        ]);
+    }
+
+    /**
+     * log the share
+     *
+     * @param  $user \App\User
+     * @param  $offer \App\Offer
+     * @return Response             the image download
+     */
+    public function logShare(User $user, Offer $offer)
+    {
+
+        if ($user->toArray() == [] || $offer->toArray() == [])
+            \App::abort(404, 'The API doesn\'t exist');
+
+        $userRepo = new UserRepository($user);
+        $userRepo->logShare($offer);
+
+        return json_encode([
+            "points" => $userRepo->getUserPoints(),
+            "level" => $userRepo->getUserLevel()->id
+        ]);
+    }
+
+    /**
+     * log the save
+     *
+     * @param  $user \App\User
+     * @param  $offer \App\Offer
+     * @return Response             the image download
+     */
+    public function logSave(User $user, Offer $offer)
+    {
+
+        if ($user->toArray() == [] || $offer->toArray() == [])
+            \App::abort(404, 'The API doesn\'t exist');
+
+        $userRepo = new UserRepository($user);
+        $userRepo->logSave($offer);
+
+        return json_encode([
+            "points" => $userRepo->getUserPoints(),
+            "level" => $userRepo->getUserLevel()->id
+        ]);
+    }
+
+    /**
+     * log the buy
+     *
+     * @param  $user \App\User
+     * @param  $offer \App\Offer
+     * @return Response             the image download
+     */
+    public function logBuy(User $user, Offer $offer)
+    {
+        if ($user->toArray() == [] || $offer->toArray() == [])
+            \App::abort(404, 'The API doesn\'t exist');
+
+        $userRepo = new UserRepository($user);
+        $userRepo->logBuy($offer);
+
+        return json_encode([
+            "points" => $userRepo->getUserPoints(),
+            "level" => $userRepo->getUserLevel()->id
         ]);
     }
 }
