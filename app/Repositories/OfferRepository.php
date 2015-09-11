@@ -77,7 +77,7 @@ class OfferRepository {
                         $tempOffer["x"] = $offer->store->x;
                         $tempOffer["y"] = $offer->store->y;
                         $tempOffer["category"] = $offer->store->category->id;
-                        $tempOffer["expire"] = strtotime($offer->end_date);
+                        $tempOffer["expire"] = 1000 * strtotime(substr($offer->end_date,0,10));
                         $tempOffer["percent"] = ceil($percentage * ($offer->maximum_percentage - 1));
                         $tempOffer["title"] = $offer->store->title;
                         $tempOffer["description"] = $offer->description;
@@ -114,7 +114,7 @@ class OfferRepository {
                 $tempOffer["x"] = $offer->store->x;
                 $tempOffer["y"] = $offer->store->y;
                 $tempOffer["category"] = $offer->store->category->id;
-                $tempOffer["expire"] = strtotime($offer->end_date);
+                $tempOffer["expire"] = 1000 * strtotime(substr($offer->end_date,0,10));
                 $tempOffer["percent"] = ceil($percentage * ($offer->maximum_percentage - 1));
                 $tempOffer["title"] = $offer->store->title;
                 $tempOffer["description"] = $offer->description;
@@ -122,7 +122,7 @@ class OfferRepository {
                 $tempOffer["img"] = "http://178.238.226.60/api/stores/" . $offer->store->id . "/image";
                 $tempOffer["id"] = $offer->store->id;
                 $tempOffer["isExpired"] = false;
-                if($tempOffer["expire"] <= strtotime(date("Y-m-d H:i:s"))){
+                if($tempOffer["expire"] <= 1000 * strtotime(substr(date("Y-m-d H:i:s")."",0,10))){
                     $tempOffer["isExpired"] = true;
                 }
 
