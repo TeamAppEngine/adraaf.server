@@ -101,7 +101,7 @@ class UserRepository {
     public function getPercentage()
     {
         $level = $this->getUserLevel();
-        return 0.05*$level;
+        return 0.05*$level->id;
     }
 
     /**
@@ -111,5 +111,26 @@ class UserRepository {
     {
         $actions = $this->UserModel->actions;
         return $actions->sum('points');
+    }
+
+    /**
+     *
+     */
+    public function logDrag($x,$y)
+    {
+        $action = \App\Action::where('title','=','drag_to_search')->get()->first();
+        $this->UserModel->actions()->attach($action->id, [
+            'points' => $action->point,
+            'action_x' => $x,
+            'action_y' => $y,
+        ]);
+    }
+
+    public function logSignUp()
+    {
+        $action = \App\Action::where('title','=','sign_up')->get()->first();
+        $this->UserModel->actions()->attach($action->id, [
+            'points' => $action->point
+        ]);
     }
 }

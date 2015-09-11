@@ -66,6 +66,7 @@ class UsersController extends Controller
         //update the information of the user
         $user = $userRepo->updateUserInfo($userInfo);
         $userRepo->setUserLevel(1);
+        $userRepo->logSignUp();
 
         //send the results back to the user
         return json_encode([
@@ -180,6 +181,7 @@ class UsersController extends Controller
 
         $offerRepo = new OfferRepository(new Offer());
         $userRepo = new UserRepository($user);
+        $userRepo->logDrag($x,$y);
 
         return json_encode([
             "offers" => $offerRepo->getOffers($x, $y, $user),
