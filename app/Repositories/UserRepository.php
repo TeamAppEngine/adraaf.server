@@ -124,6 +124,7 @@ class UserRepository {
             'action_x' => $x,
             'action_y' => $y,
         ]);
+        $this->levelUpIfPossible();
     }
 
     /**
@@ -135,6 +136,7 @@ class UserRepository {
         $this->UserModel->actions()->attach($action->id, [
             'points' => $action->point
         ]);
+        $this->levelUpIfPossible();
     }
 
     /**
@@ -147,6 +149,7 @@ class UserRepository {
             'points' => $action->point,
             'offer_id' => $offer->id
         ]);
+        $this->levelUpIfPossible();
     }
 
     /**
@@ -159,6 +162,7 @@ class UserRepository {
             'points' => $action->point,
             'offer_id' => $offer->id
         ]);
+        $this->levelUpIfPossible();
     }
 
     /**
@@ -171,5 +175,18 @@ class UserRepository {
             'points' => $action->point,
             'offer_id' => $offer->id
         ]);
+        $this->levelUpIfPossible();
+    }
+
+    public function levelUpIfPossible(){
+        $points = $this->getUserPoints();
+        $currentLevel = $this->getUserLevel();
+        $levels = \App\Level::all();
+        if($currentLevel->id != count($levels)){
+            $nextLevel = $levels[$currentLevel->id];
+            if($nextLevel->criteria <= $points){
+                $this->setUserLevel($nextLevel->id);
+            }
+        }
     }
 }
