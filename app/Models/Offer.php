@@ -11,6 +11,11 @@ class Offer extends \Illuminate\Database\Eloquent\Model{
 	 */
 	protected $table = 'offers';
 
+    public function store()
+    {
+        return $this->belongsTo('\App\Store');
+    }
+
     public function actions()
     {
         return $this->belongsToMany('App\Action', 'user_actions','offer_id', 'action_id')

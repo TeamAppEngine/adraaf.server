@@ -13,24 +13,12 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 //use Rhumsaa\Uuid;
 use App\User;
-use Repositories\SessionRepository;
-use Repositories\TopicRepository;
+use App\Offer;
 use Repositories\UserRepository;
-use Repositories\CountryRepository;
+use Repositories\OfferRepository;
 
 class UsersController extends Controller
 {
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-
-        \App::abort(404, 'function not implemented');
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -82,140 +70,9 @@ class UsersController extends Controller
         //send the results back to the user
         return json_encode([
             "points" => 0,
-            "level" =>1,
+            "level" => 1,
             "user_id" => $user->uuid
         ]);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  User $user
-     * @return Response
-     */
-    //TODO: write unit tests
-    public function show(User $user, User $partner)
-    {
-
-        if ($user->toArray() == [] || $partner->toArray() == [])
-            \App::abort(404, 'The API doesn\'t exist');
-        $imageUrl = "";
-        $imageIndex = Libraries\ImageHelper::getTheCurrentImageIndex($partner);
-        if ($imageIndex != -1) //the user has an image
-        {
-            $imageUrl = \Request::url() . "/image";
-        }
-
-        $sessionRepo = new SessionRepository(new \App\Session());
-        $session = $sessionRepo->getSessionDetails($user, $partner);
-        $topicRepo = new TopicRepository(new \App\Topic());
-        $topic = $topicRepo->getTopicBasedOnId($session->topic_id);
-        $userRepo = new UserRepository(new \App\User());
-        $tempTopic = [];
-        $tempTopic['id'] = $topic->id;
-        $tempTopic['text'] = $topic->text;
-        $tempTopic['extra_question'] = $topic->extraQuestions()->FirstOrFail()->text;
-        $prompts = $topic->prompts;
-        $promptArray = [];
-        foreach($prompts as $prompt)
-        {
-            $tempPrompt['id'] = $prompt->id;
-            $tempPrompt['text'] = $prompt->text;
-            $promptArray[] = $tempPrompt;
-        }
-        $tempTopic['prompts'] = $promptArray;
-
-        $result = [
-            "partner" => [
-                "email" => $partner->email,
-                "first_name" => $partner->first_name,
-                "last_name" => $partner->last_name,
-                "birth_date" => $partner->date_of_birth,
-                "country_iso" => $partner->country->iso_code,
-                "profile_image" => $imageUrl,
-                "gender" => $partner->gender
-            ],
-            "role" => $userRepo->getUserRoleBasedOnEmail($partner)->role,
-            "topic" => $tempTopic
-        ];
-
-        return json_encode($result);
-
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Request $request
-     * @param  \App\User the information of the user
-     * @return Response
-     */
-    public function changePresence(Request $request, User $user)
-    {
-        if ($user->toArray() == [])
-            \App::abort(404, 'The API doesn\'t exist');
-
-        if ($request->get('presence')){
-            $presenceId = $request->get('presence');
-            $userRepo = new UserRepository($user);
-            $userRepo->updateUserPresence($presenceId);
-        } else {
-            \App::abort(400, 'The contract of the api was not met');
-        }
-
-        return json_encode([]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Request $request
-     * @param  \App\User the information of the user
-     * @return Response
-     */
-    //TODO: must write tests
-    public function update(Request $request, User $user)
-    {
-
-        if ($user->toArray() == [])
-            \App::abort(404, 'The API doesn\'t exist');
-
-        if ($request->get('first_name') &&
-            $request->get('last_name') &&
-            $request->get('birth_date') &&
-            $request->get('gender') &&
-            $request->get('country_iso')
-        ) {
-            Libraries\ImageHelper::saveTheProfileImage($request, $user);
-
-            $countryRepo = new CountryRepository(new \App\Country);
-            $country = $countryRepo->getCountryBaseOnISO($request->get('country_iso'));
-            $userInfo = [
-                "first_name" => $request->get('first_name'),
-                "last_name" => $request->get('last_name'),
-                "country_id" => $country->id,
-                "date_of_birth" => $request->get('birth_date'),
-                "gender" => $request->get('gender') == 'male' ? 1 : 0,
-            ];
-
-            $userRepo = new UserRepository($user);
-            $userRepo->updateUserInfo($userInfo);
-        } else {
-            \App::abort(400, 'The contract of the api was not met');
-        }
-
-        return json_encode([]);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 
     /**
@@ -295,5 +152,68 @@ class UsersController extends Controller
         return json_encode($userInfo);
     }
 
+    /**
+     * Get the image of the user
+     *
+     * @param  Request $request the username and password of the user
+     * @param $user \App\User
+     * @return Response             the image download
+     */
+    public function getOffers(Request $request, User $user)
+    {
 
+        if ($user->toArray() == [])
+            \App::abort(404, 'The API doesn\'t exist');
+
+
+        //get the x and y from the input
+        $x = "";
+        $y = "";
+
+        if ($request->get('x') && $request->get('y')) {
+
+            $x = $request->get('x');
+            $y = $request->get('y');
+        } else {
+            \App::abort(400, 'The contract of the api was not met');
+        }
+
+        $offerRepo = new OfferRepository(new Offer());
+        $userRepo = new UserRepository($user);
+
+        return json_encode([
+            "offers" => $offerRepo->getOffers($x, $y, $user),
+            "points" => $userRepo->getUserPoints(),
+            "level" => $userRepo->getUserLevel()->id
+        ]);
+    }
+
+    /**
+     * Get the offers
+     *
+     * @param  Request $request the username and password of the user
+     * @return Response             the image download
+     */
+    public function getOffersAnonymously(Request $request)
+    {
+        //get the x and y from the input
+        $x = "";
+        $y = "";
+
+        if ($request->get('x') && $request->get('y')) {
+
+            $x = $request->get('x');
+            $y = $request->get('y');
+        } else {
+            \App::abort(400, 'The contract of the api was not met');
+        }
+
+        $offerRepo = new OfferRepository(new Offer());
+
+        return json_encode([
+            "offers" => $offerRepo->getOffers($x, $y, null),
+            "points" => 0,
+            "level" => 0
+        ]);
+    }
 }

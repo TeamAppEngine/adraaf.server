@@ -34,9 +34,13 @@ Route::post('api/users', 'UsersController@store');
 
 Route::get('api/users/login_session','UsersController@getSession');
 
+Route::get('api/users/offers','UsersController@getOffers');
+
 Route::get('api/users/{uuid}/offers','UsersController@getOffers');
 
-Route::get('api/users/{uuid}/image','UsersController@getImage');
+Route::get('api/users/offers','UsersController@getOffersAnonymously');
+
+Route::get('api/stores/{id}/image','UsersController@getImage');//TODO
 
 //--------------------- Default -------------------
 

@@ -1,72 +1,8 @@
->> New version of the jenkins config
-
-composer install
-cp .env.test .env
-cp codeception.yml.test codeception.yml
-cp tests/api.suite.yml.test tests/api.suite.yml
-php artisan key:generate
-
-sudo rm -rf /var/www/teatalk
-
-sudo rsync -r --exclude vendor/ . /var/www/teatalk
-
-php artisan migrate
-
-./vendor/bin/codecept run
-
-cd /var/www/teatalk
+sudo git clone https://msadjad@github.com/TeamAppEngine/adraaf.server.git adraaf
+sudo chown -R :www-data /var/www/adraaf
+sudo chmod -R 775 /var/www/adraaf/storage
+cd /var/www/adraaf/
 sudo composer install
+sudo cp .env.test .env
+sudo php artisan key:generate
 
-sudo chown -R :www-data /var/www/teatalk
-sudo chmod -R 775 /var/www/teatalk/storage
-
-sudo ./vendor/bin/codecept run
-
-rsync -vrzhe "ssh -o StrictHostKeyChecking=no" --exclude vendor/ . root@188.166.108.66:/var/www/teatalk
-
-ssh root@188.166.108.66 <<EOF
- cd /var/www/teatalk
- cp .env.production .env
- sudo chown -R :www-data /var/www/teatalk
- sudo chmod -R 775 /var/www/teatalk/storage
- composer install --no-dev
- php artisan migrate --force
-EOF
-
-
->> Old version of the jenkins config
-
-composer install
-cp .env.test .env
-php artisan key:generate
-./vendor/bin/codecept run
-
-rsync -vrzhe "ssh -o StrictHostKeyChecking=no" --exclude vendor/ . root@188.166.108.66:/var/www/teatalk
-
-ssh root@188.166.108.66 <<EOF
- cd /var/www/teatalk 
- cp .env.production .env
- sudo chown -R :www-data /var/www/teatalk
- sudo chmod -R 775 /var/www/teatalk/storage
- composer install --no-dev
-EOF
-
-CODE TO DEPLOY >>>>>>>>>>>>>>>>>>>>>>
-git clone https://msadjad@bitbucket.org/teatalkio/backend.git teatalk
-sudo chown -R :www-data /var/www/teatalk
-sudo chmod -R 775 /var/www/teatalk/storage
-cd /var/www/teatalk/
-composer install
-cp .env.test .env
-cp codeception.yml.test codeception.yml
-cp tests/api.suite.yml.test tests/api.suite.yml
-php artisan key:generate
-cd /var/www/teatalk
-sudo chown -R :www-data /var/www/teatalk
-sudo chmod -R 775 /var/www/teatalk/storage
-
-sudo ./vendor/bin/codecept run
-
-//Test Tinker
-$sadjad = new \App\Http\Libraries\VoxImplantServer()
-$sadjad->createUser("sadjadi7","fallahi7");

@@ -98,6 +98,15 @@ class UserRepository {
     /**
      *
      */
+    public function getPercentage()
+    {
+        $level = $this->getUserLevel();
+        return 0.05*$level;
+    }
+
+    /**
+     *
+     */
     public function getUserPoints()
     {
         $actions = $this->UserModel->actions;
