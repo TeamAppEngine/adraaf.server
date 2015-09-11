@@ -1,3 +1,5 @@
+cd /var/www/
+sudo rm -r adraaf
 sudo git clone https://msadjad@github.com/TeamAppEngine/adraaf.server.git adraaf
 sudo chown -R :www-data /var/www/adraaf
 sudo chmod -R 775 /var/www/adraaf/storage

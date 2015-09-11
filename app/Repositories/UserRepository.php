@@ -101,7 +101,7 @@ class UserRepository {
     public function getPercentage()
     {
         $level = $this->getUserLevel();
-        return 0.05*$level->id;
+        return ceil(0.05*$level->id);
     }
 
     /**
