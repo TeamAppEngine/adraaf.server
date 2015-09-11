@@ -89,7 +89,7 @@ class UsersController extends Controller
         $imageIndex = $store->img_url;
         if ($imageIndex != NULL) //the user has an image
         {
-            $filePath = storage_path() . "\\store_images\\" . $imageIndex;
+            $filePath = storage_path() . "/store_images/" . $imageIndex;
 
             return \Response::download($filePath, $store->title . ".jpg", [
                 'Content-Type' => 'text/jpeg',
