@@ -53,6 +53,8 @@ Route::post('api/users/{uuid}/save/{offer_id}','UsersController@logSave');
 
 Route::post('api/users/{uuid}/buy/{offer_id}','UsersController@logBuy');
 
+Route::get('api/users/{uuid}/saved_offers','UsersController@getSavedOffers');
+
 Route::get('api/stores/{store_id}/image','UsersController@getImage');
 
 //--------------------- Default -------------------

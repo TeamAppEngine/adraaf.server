@@ -2,6 +2,7 @@
 
 use App\Offer;
 use App\User;
+use App\Action;
 
 class OfferRepository {
 
@@ -89,6 +90,51 @@ class OfferRepository {
             }
         }
 
+        return $resultOffers;
+    }
+
+    public function getSavedOffers(User $user)
+    {
+        $actions = $user->actions;
+
+        $actionBuy = \App\Action::where('title','=','buy_offer')->get()->first();
+        $actionSave = \App\Action::where('title','=','save_offer')->get()->first();
+        $resultOffers = [];
+        $percentage = 0.05;
+        if($user != null){
+            $userRepo = new UserRepository($user);
+            $percentage = $userRepo->getPercentage();
+        }
+
+        foreach($actions as $action)
+        {
+            if($action->id == $actionBuy->id || $action->id == $actionSave->id){
+                $offer = Offer::findOrNew($action->pivot->offer_id);
+                $tempOffer = [];
+                $tempOffer["x"] = $offer->store->x;
+                $tempOffer["y"] = $offer->store->y;
+                $tempOffer["category"] = $offer->store->category->id;
+                $tempOffer["expire"] = strtotime($offer->end_date);
+                $tempOffer["percent"] = $percentage * ($offer->maximum_percentage - 1);
+                $tempOffer["title"] = $offer->store->title;
+                $tempOffer["description"] = $offer->description;
+                $tempOffer["address"] = $offer->store->address;
+                $tempOffer["img"] = "http://178.238.226.60/api/stores/" . $offer->store->id . "/image";
+                $tempOffer["id"] = $offer->store->id;
+                $tempOffer["isExpired"] = false;
+                if($tempOffer["expire"] <= strtotime(date("Y-m-d H:i:s"))){
+                    $tempOffer["isExpired"] = true;
+                }
+
+                if($action->id == $actionBuy->id){
+                    $tempOffer["state"] = 1;
+                }
+                if($action->id == $actionSave->id){
+                    $tempOffer["state"] = 2;
+                }
+                $resultOffers[] = $tempOffer;
+            }
+        }
         return $resultOffers;
     }
 

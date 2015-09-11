@@ -190,6 +190,29 @@ class UsersController extends Controller
     }
 
     /**
+     * Get the saved offers of the user
+     *
+     * @param  Request $request the username and password of the user
+     * @param $user \App\User
+     * @return Response             the image download
+     */
+    public function getSavedOffers(Request $request, User $user)
+    {
+
+        if ($user->toArray() == [])
+            \App::abort(404, 'The API doesn\'t exist');
+
+        $offerRepo = new OfferRepository(new Offer());
+        $userRepo = new UserRepository($user);
+
+        return json_encode([
+            "offers" => $offerRepo->getSavedOffers($user),
+            "points" => $userRepo->getUserPoints(),
+            "level" => $userRepo->getUserLevel()->id
+        ]);
+    }
+
+    /**
      * Get the offers
      *
      * @param  Request $request the username and password of the user
