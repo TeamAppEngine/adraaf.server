@@ -78,7 +78,7 @@ class OfferRepository {
                         $tempOffer["y"] = $offer->store->y;
                         $tempOffer["category"] = $offer->store->category->id;
                         $tempOffer["expire"] = strtotime($offer->end_date);
-                        $tempOffer["percent"] = $percentage * ($offer->maximum_percentage - 1);
+                        $tempOffer["percent"] = ceil($percentage * ($offer->maximum_percentage - 1));
                         $tempOffer["title"] = $offer->store->title;
                         $tempOffer["description"] = $offer->description;
                         $tempOffer["address"] = $offer->store->address;
@@ -115,7 +115,7 @@ class OfferRepository {
                 $tempOffer["y"] = $offer->store->y;
                 $tempOffer["category"] = $offer->store->category->id;
                 $tempOffer["expire"] = strtotime($offer->end_date);
-                $tempOffer["percent"] = $percentage * ($offer->maximum_percentage - 1);
+                $tempOffer["percent"] = ceil($percentage * ($offer->maximum_percentage - 1));
                 $tempOffer["title"] = $offer->store->title;
                 $tempOffer["description"] = $offer->description;
                 $tempOffer["address"] = $offer->store->address;
