@@ -25,6 +25,13 @@ Route::bind('offer_id',function($id){
 
 });
 
+Route::bind('store_id',function($id){
+
+    $storeModel = new \Repositories\StoreRepository(new \App\Store);
+    return $storeModel->getStoreBasedOnId($id);
+
+});
+
 //caa126a6-b0b8-440c-8512-9c506264bf61
 //Route::pattern('uuid','/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/');
 
@@ -46,7 +53,7 @@ Route::post('api/users/{uuid}/save/{offer_id}','UsersController@logSave');
 
 Route::post('api/users/{uuid}/buy/{offer_id}','UsersController@logBuy');
 
-Route::get('api/stores/{id}/image','UsersController@getImage');//TODO
+Route::get('api/stores/{store_id}/image','UsersController@getImage');
 
 //--------------------- Default -------------------
 

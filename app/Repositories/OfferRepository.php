@@ -81,7 +81,7 @@ class OfferRepository {
                         $tempOffer["title"] = $offer->store->title;
                         $tempOffer["description"] = $offer->description;
                         $tempOffer["address"] = $offer->store->address;
-                        $tempOffer["img"] = "http://umkkf795f2ee.msadjad.koding.io/" . $offer->store->id . "/image";
+                        $tempOffer["img"] = "http://178.238.226.60/api/stores/" . $offer->store->id . "/image";
                         $tempOffer["id"] = $offer->store->id;
                         $resultOffers[] = $tempOffer;
                     }

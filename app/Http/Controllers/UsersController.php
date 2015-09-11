@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Session;
 //use Rhumsaa\Uuid;
 use App\User;
 use App\Offer;
+use App\Store;
 use Repositories\UserRepository;
 use Repositories\OfferRepository;
 
@@ -77,27 +78,25 @@ class UsersController extends Controller
     }
 
     /**
-     * Get the session for a user
-     *
-     * @param Request $request the request sent to the user
-     * @return Response         the user information
+     * @param Store $store
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function getImage(User $user)
+    public function getImage(Store $store)
     {
-
-        if ($user->toArray() == [])
+        if ($store->toArray() == [])
             \App::abort(404, 'The API doesn\'t exist');
         $imageUrl = "";
-        $imageIndex = Libraries\ImageHelper::getTheCurrentImageIndex($user);
-        if ($imageIndex != -1) //the user has an image
+        $imageIndex = $store->img_url;
+        if ($imageIndex != NULL) //the user has an image
         {
-            $filePath = storage_path() . "\app\avatars\\" . $user->uuid . "$imageIndex.jpg";
+            $filePath = storage_path() . "\\store_images\\" . $imageIndex;
 
-            return \Response::download($filePath, $user->first_name . ".jpg", [
+            return \Response::download($filePath, $store->title . ".jpg", [
                 'Content-Type' => 'text/jpeg',
             ]);
         }
         \App::abort(404, 'The user doesn\'t have a valid image');
+        return [];
     }
 
     /**
