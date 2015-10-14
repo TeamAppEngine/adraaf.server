@@ -71,9 +71,13 @@ class UsersController extends Controller
 
         //send the results back to the user
         return json_encode([
-            $userRepo->getUserPoints(),
-            $userRepo->getUserLevel()->id,
-            "user_id" => $user->uuid
+            "status" => [
+                "points" => $userRepo->getUserPoints(),
+                "level" => $userRepo->getUserLevel()->id,
+            ],
+            "user_id" => $user->uuid,
+            "email" => $email,
+            "password" => sha1($password),
         ]);
     }
 
@@ -141,8 +145,10 @@ class UsersController extends Controller
             //send the results back to the user
             return json_encode([
                 "points" => $userRepo->getUserPoints(),
-                "level" =>  $userRepo->getUserLevel()->id,
-                "user_id" => $user->uuid
+                "status" => [
+                    "level" => $userRepo->getUserLevel()->id,
+                    "user_id" => $user->uuid
+                ]
             ]);
 
 
@@ -180,12 +186,14 @@ class UsersController extends Controller
 
         $offerRepo = new OfferRepository(new Offer());
         $userRepo = new UserRepository($user);
-        $userRepo->logDrag($x,$y);
+        $userRepo->logDrag($x, $y);
 
         return json_encode([
             "offers" => $offerRepo->getOffers($x, $y, $user),
-            "points" => $userRepo->getUserPoints(),
-            "level" => $userRepo->getUserLevel()->id
+            "status" => [
+                "points" => $userRepo->getUserPoints(),
+                "level" => $userRepo->getUserLevel()->id
+            ]
         ]);
     }
 
@@ -207,8 +215,10 @@ class UsersController extends Controller
 
         return json_encode([
             "offers" => $offerRepo->getSavedOffers($user),
-            "points" => $userRepo->getUserPoints(),
-            "level" => $userRepo->getUserLevel()->id
+            "status" => [
+                "points" => $userRepo->getUserPoints(),
+                "level" => $userRepo->getUserLevel()->id
+            ]
         ]);
     }
 
@@ -236,8 +246,10 @@ class UsersController extends Controller
 
         return json_encode([
             "offers" => $offerRepo->getOffers($x, $y, null),
-            "points" => 0,
-            "level" => 0
+            "status" => [
+                "points" => 0,
+                "level" => 0
+            ]
         ]);
     }
 
